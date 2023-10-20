@@ -4,18 +4,32 @@
 	<meta charset="utf-8">
 	<title>NodeJS WebSocket Server</title>
 </head>
-<body>
-	<h1>Hello world</h1>
 <script>
-const ws = new WebSocket("ws://localhost:8080");
+
+const ws = new WebSocket("ws://localhost:3000");
 ws.addEventListener("open", () =>{
   console.log("We are connected");
-  ws.send("How are you?");
 });
- 
+
+function inviaMessaggio(){
+  let m = document.getElementById("messaggio")
+  ws.send(m.value);
+}
+
 ws.addEventListener('message', function (event) {
     console.log(event.data);
 });
 </script>
+<body>
+
+  <h1>Chat 5I1</h1>
+  <p>
+    Messaggio da inviare: <input type="text" id="messaggio">
+    <button id="bInvia" onclick="inviaMessaggio()">invia</button>
+  </p>
+  </p>
+    Messaggi arrivati: <span id="mInArrivo"></span>
+  </p>
+
 </body>
 </html>
