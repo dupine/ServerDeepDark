@@ -14,7 +14,7 @@ Per la comunicazione abbiamo creato un nuovo protocollo, RBTTP(Rapid Broadcast T
 ### 1) Funzionamento protocollo
 Nella prima parte della descrizione del protocollo tratteremo come funziona in maniera generale, per poi entrare più nel dettaglio successivamente. La separazione dei campi sarà fatta tramite la **virgola**.
 #### 1.1) Autenticazione
-``parola chiave`` **login**.
+parola chiave = ``login``
 ```
 login,username,password
 
@@ -22,7 +22,7 @@ Esempio:
 login,loremIpsum,123456
 ```
 #### 1.2) Messaggio
-``parola chiave`` = **messaggio**.
+parola chiave = ``messaggio``.
 ```
 messaggio,username,hh:mm,testo
 
@@ -31,7 +31,7 @@ messaggio,loremIpsum,10:55,vi aspetto in aula 154!
 ```
 #### 1.3) Storico
 Grazie alla richiesta dello storico si potranno ottenere tutti i messsaggi desiderati di un certo intervallo di tempo.
-``parola chiave`` = **storico**.
+parola chiave = ``storico``.
 ```
 storico,hh:mm,hh:mm
 
@@ -40,4 +40,4 @@ storico,10:55,11:55
 ```
 #### 1.3) Partecipanti
 Se necessitiamo di sapere gli utenti attivi al momento possiamo utilizzare questa richiesta.
-Parola chiave = **listautenti**
+Parola chiave = ``listautenti``.
