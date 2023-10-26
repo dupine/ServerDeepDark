@@ -49,6 +49,7 @@ function login(_nome, _password){
     fs.readFile("accounts.csv", "utf-8", (err, data) => {
         if (err) console.log(err);
         else {
+            console.log("verifi");
             let fileData = data.split("\n");
             fileData.forEach(element => {
                 // qua splittiamo e vediamo se nome e password coincidono
