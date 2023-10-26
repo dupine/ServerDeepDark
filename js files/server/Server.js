@@ -6,17 +6,18 @@ const wss = new WebSocketServer.Server({ port: 3000 })
 
 // connection using websocket
 wss.on("connection", ws => {
-    console.log("new client connected");
+
+    console.log("----- new client connected -----");
     ws.send('Welcome, you are connected!');
- 
+    
     // gestione messaggi
     ws.on("message", data => {
-        commandHanlder(data);
+        commandHanlder(data, ws);
     });
  
     // on disconnection
     ws.on("close", () => {
-        console.log("the client has connected");
+        console.log("the client has disconnected");
     });
 
     // client errors
@@ -26,42 +27,51 @@ wss.on("connection", ws => {
 });
 console.log("The WebSocket server is running on port 3000");
 
-function commandHanlder(data){
+function commandHanlder(data, ws){
     var campi = String(data).split("/");
-    console.log("s");
+
     switch(campi[0]) {
+        // se login
         case "login":
-            login(campi[1], campi[2]);
+            login(campi[1]+','+campi[2], ws);
             break;
+
+        // se messaggio
         case "messaggio":
-            // code block
             break;
+
+        // se storico
         case "storico":
-            //
             break;
+
         default:
           console.log("comando sconosciuto!");
       }
 }
 
-function login(_nome, _password){
-    let i=0;
-    let trovato=false;
-    const fs = require("fs");
-    fs.readFile("accounts.csv", "utf-8", (err, data) => {
+function login(campo, ws){
+    let trovato = false;
+    require("fs").readFile("accounts.csv", "utf-8", (err, data) => {
+        
+        // se errore
         if (err) console.log(err);
+        
+        // cerco la corrispondenza
         else {
-          let fileData = data.split("\n");
-          let autenticazione = _nome +","+_password;
-            fileData.forEach(element => {
-               for(i; i<fileData.length; i++ ){
-                    if(autenticazione==fileData[i]){
-                        console.log("Autenticazione Riconosciuta");
-                    }else{
-                        console.log("non conosciuto");
-                    }
+            // l'editor di windows aggiuge il \r ovver il carriage return, per dire di mettere il cursore all'inizio della prossima linea
+            var fileData = data.split("\r\n");
+
+            for(let i = 0; i < fileData.length && !trovato; i++ ){
+                if(campo==fileData[i]){
+                    console.log("Autenticazione Riconosciuta");
+                    trovato = true;
                 }
-            })
+            }
+
+            if(!trovato){
+                console.log("Autenticazione fallita, disconnessione utente.")
+                ws.close(); 
+            }
         }
     });
 
