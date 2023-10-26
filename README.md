@@ -17,27 +17,27 @@ Nella prima parte della descrizione del protocollo tratteremo come funziona in m
 #### 1.1) Autenticazione
 Parola chiave = ``login``
 ```
-login,username,password
+login/username/password
 
 Esempio:
-login,loremIpsum,123456
+login/loremIpsum/123456
 ```
 #### 1.2) Messaggio
 Parola chiave = ``messaggio``.
 ```
-messaggio,username,hh:mm,testo
+messaggio/username/hh:mm/testo
 
 Esempio:
-messaggio,loremIpsum,10:55,vi aspetto in aula 154!
+messaggio/loremIpsum/10:55/vi aspetto in aula 154!
 ```
 #### 1.3) Storico
 Grazie alla richiesta dello storico si potranno ottenere tutti i messsaggi desiderati di un certo intervallo di tempo.
 Parola chiave = ``storico``.
 ```
-storico,hh:mm,hh:mm
+storico/hh:mm/hh:mm
 
 Esempio:
-storico,10:55,11:55
+storico/10:55/11:55
 ```
 #### 1.3) Partecipanti
 Se necessitiamo di sapere gli utenti attivi al momento possiamo utilizzare questa richiesta che è formata solamente dalla parola chiave.
