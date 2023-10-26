@@ -3,7 +3,8 @@ const ws = new WebSocket.Server({ port: 3000 });
 
 ws.on("connection", (ws) => {
   console.log("Client connected")
-  ws.send('Welcome, you are connected!');
+  // provo il login
+  ws.send('login/matteo11/12345');
   ws.on("message", data => {
     console.log(`Client has sent us: ${data}`)
 });

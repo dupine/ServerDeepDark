@@ -1,28 +1,60 @@
-// Importing the required modules
+// imports
 const WebSocketServer = require('ws');
- 
-// Creating a new websocket server
+
+// creao oggetto webSocket
 const wss = new WebSocketServer.Server({ port: 3000 })
- 
-// Creating connection using websocket
+
+// connection using websocket
 wss.on("connection", ws => {
     console.log("new client connected");
- 
-    // sending message to client
     ws.send('Welcome, you are connected!');
  
-    //on message from client
+    // gestione messaggi
     ws.on("message", data => {
-        console.log(`Client has sent us: ${data}`)
+        commandHanlder(data);
     });
  
-    // handling what to do when clients disconnects from server
+    // on disconnection
     ws.on("close", () => {
         console.log("the client has connected");
     });
-    // handling client connection error
+
+    // client errors
     ws.onerror = function () {
         console.log("Some Error occurred")
     }
 });
 console.log("The WebSocket server is running on port 3000");
+
+function commandHanlder(data){
+    var campi = String(data).split("/");
+    console.log("s");
+    switch(campi[0]) {
+        case "login":
+            login(campi[1], campi[2]);
+            break;
+        case "messaggio":
+            // code block
+            break;
+        case "storico":
+            //
+            break;
+        default:
+          console.log("comando sconosciuto!");
+      }
+}
+
+function login(_nome, _password){
+    const fs = require("fs");
+    fs.readFile("accounts.csv", "utf-8", (err, data) => {
+        if (err) console.log(err);
+        else {
+            let fileData = data.split("\n");
+            fileData.forEach(element => {
+                // qua splittiamo e vediamo se nome e password coincidono
+            })
+        }
+    });
+
+
+}
