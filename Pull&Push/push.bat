@@ -13,9 +13,9 @@ IF "%input%" == "" (
 )
 
 :commit
-git.exe add .
-git.exe commit -m "%input%"
-git.exe push
+git add .
+git commit -m "%input%"
+git push
 ECHO Successfully Commited
 
 :exit
