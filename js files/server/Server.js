@@ -1,35 +1,41 @@
 // imports
 const WebSocketServer = require('ws');
 
-// creao oggetto webSocket
+
+
+// creazione oggetti
 const wss = new WebSocketServer.Server({ port: 3000 })
 
-// connection using websocket
-wss.on("connection", ws => {
 
-    console.log("----- new client connected -----");
-    ws.send('Welcome, you are connected!');
+
+// ------------------ CONNESSIONE TRAMITE WEBSOCKET ------------------
+wss.on("connection", ws => {
+    console.log("| Nuovo client sconosciuto connesso: ");
+    ws.send('Benvenuto! Sei connesso al server, perfavore accedi!');
     
     // gestione messaggi
     ws.on("message", data => {
-        commandHanlder(data, ws);
+        gestioneRichieste(data, ws);
     });
  
-    // on disconnection
+    // client disconnesso
     ws.on("close", () => {
-        console.log("the client has disconnected");
+        console.log("| cliente disconnesso");
     });
 
-    // client errors
+    // errori client
     ws.onerror = function () {
-        console.log("Some Error occurred")
+        console.log("<ERRORE>: si è verificato unn errore")
     }
 });
-console.log("The WebSocket server is running on port 3000");
+console.log("| The WebSocket server is running on port 3000");
 
-function commandHanlder(data, ws){
+
+
+// ------------------ GESTIONE DELLE RICHIESTE ------------------
+function gestioneRichieste(data, ws){
     var campi = String(data).split("/");
-
+    // TODO: aggiungere che se un utente non si è prima loggato, non può fare niente.
     switch(campi[0]) {
         // se login
         case "login":
@@ -46,12 +52,14 @@ function commandHanlder(data, ws){
             break;
 
         default:
-          console.log("comando sconosciuto!");
+            console.log("<RICHIESTA> richiesta client sconosciuta!");
+            ws.send("comando sconosciuto!");
       }
 }
 
 
-// gestione richiesta di login
+
+// ------------------ GESTIONE RICHIESTA LOGIN ------------------
 function login(nome, password, ws){
     let trovato = false;
     let nomeEPass = nome+","+password;
@@ -67,15 +75,16 @@ function login(nome, password, ws){
 
             for(let i = 0; i < fileData.length && !trovato; i++ ){
                 if(nomeEPass==fileData[i].trim()){
-                    console.log("Autenticazione Riconosciuta");
+                    console.log("| Autenticazione Riconosciuta");
                     ws.nome = nome;
+                    ws.autenticato = true;
                     partecipanti();
                     trovato = true;
                 }
             }
 
             if(!trovato){
-                console.log("Autenticazione fallita, disconnessione utente.")
+                console.log("| Autenticazione fallita, disconnessione utente.")
                 ws.close(); 
             }
         }
@@ -83,21 +92,25 @@ function login(nome, password, ws){
 }
 
 
-// gestione richiesta di messaggio
+
+// ------------------ GESTIONE RICHIESTA MESSAGGIO ------------------
 function message(username, data, messaggio){
-    console.log(">> invio broadcast del messaggio di "+ username+": "+messaggio);
+    console.log("<RISPOSTA> invio broadcast del messaggio di "+ username+": "+messaggio);
     wss.clients.forEach(function each(client){
         client.send("messaggio/"+username+"/"+data+"/"+messaggio);
     })
 }
 
-// invio lista dei partecipanti
+
+
+// ------------------ INVIO LISTA DEI PARTECIPANTI ------------------
 function partecipanti(){
-    console.log(">> invio lista partecipanti a tutti");
+    console.log("<RISPOSTA> invio lista partecipanti a tutti");
     let partecipanti = "";
     wss.clients.forEach(function each(client){
        partecipanti+=client.nome+" ";
     })
-    // no, falla simile
-    message("", "", partecipanti)
+    wss.clients.forEach(function each(client){
+        client.send(partecipanti);
+    })
 }
