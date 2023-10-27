@@ -33,11 +33,12 @@ function commandHanlder(data, ws){
     switch(campi[0]) {
         // se login
         case "login":
-            login(campi[1]+','+campi[2], ws);
+            login(campi[1], campi[2], ws);
             break;
 
         // se messaggio
         case "messaggio":
+            message(campi[1], campi[2], campi[3]);
             break;
 
         // se storico
@@ -49,8 +50,11 @@ function commandHanlder(data, ws){
       }
 }
 
-function login(campo, ws){
+
+// gestione richiesta di login
+function login(nome, password, ws){
     let trovato = false;
+    let nomeEPass = nome+","+password;
     require("fs").readFile("accounts.csv", "utf-8", (err, data) => {
         
         // se errore
@@ -59,11 +63,13 @@ function login(campo, ws){
         // cerco la corrispondenza
         else {
             // l'editor di windows aggiuge il \r ovver il carriage return, per dire di mettere il cursore all'inizio della prossima linea
-            var fileData = data.split("\r\n");
+            var fileData = data.split("\n");
 
             for(let i = 0; i < fileData.length && !trovato; i++ ){
-                if(campo==fileData[i]){
+                if(nomeEPass==fileData[i].trim()){
                     console.log("Autenticazione Riconosciuta");
+                    ws.nome = nome;
+                    partecipanti();
                     trovato = true;
                 }
             }
@@ -74,6 +80,24 @@ function login(campo, ws){
             }
         }
     });
+}
 
 
+// gestione richiesta di messaggio
+function message(username, data, messaggio){
+    console.log(">> invio broadcast del messaggio di "+ username+": "+messaggio);
+    wss.clients.forEach(function each(client){
+        client.send("messaggio/"+username+"/"+data+"/"+messaggio);
+    })
+}
+
+// invio lista dei partecipanti
+function partecipanti(){
+    console.log(">> invio lista partecipanti a tutti");
+    let partecipanti = "";
+    wss.clients.forEach(function each(client){
+       partecipanti+=client.nome+" ";
+    })
+    // no, falla simile
+    message("", "", partecipanti)
 }
