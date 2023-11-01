@@ -7,10 +7,11 @@ const WebSocketServer = require('ws');
 const wss = new WebSocketServer.Server({ port: 3000 })
 
 
-
 // ------------------ CONNESSIONE TRAMITE WEBSOCKET ------------------
-wss.on("connection", ws => {
-    console.log("| Nuovo client sconosciuto connesso: ");
+wss.on("connection", (ws, req) => {
+    // TODO: trovare un modo per identificare le varie connessioni
+    ws.id = req.headers['sec-websocket-key'];
+    console.log("| Nuovo client sconosciuto connesso: "+ws.id);
     ws.send('Benvenuto! Sei connesso al server, perfavore accedi!');
     
     // gestione messaggi
@@ -19,8 +20,8 @@ wss.on("connection", ws => {
     });
  
     // client disconnesso
-    ws.on("close", () => {
-        console.log("| cliente disconnesso");
+    ws.on("close", () => {    
+        console.log("| cliente: "+ws.id+", disconnesso");
     });
 
     // errori client
@@ -65,17 +66,12 @@ function login(nome, password, ws){
     let nomeEPass = nome+","+password;
     require("fs").readFile("accounts.csv", "utf-8", (err, data) => {
         
-        // se errore
         if (err) console.log(err);
-        
-        // cerco la corrispondenza
         else {
-            // l'editor di windows aggiuge il \r ovver il carriage return, per dire di mettere il cursore all'inizio della prossima linea
             var fileData = data.split("\n");
-
             for(let i = 0; i < fileData.length && !trovato; i++ ){
                 if(nomeEPass==fileData[i].trim()){
-                    console.log("| Autenticazione Riconosciuta");
+                    console.log("| Autenticazione riconosciuta");
                     ws.nome = nome;
                     ws.autenticato = true;
                     partecipanti();
@@ -107,10 +103,11 @@ function message(username, data, messaggio){
 function partecipanti(){
     console.log("<RISPOSTA> invio lista partecipanti a tutti");
     let partecipanti = "";
-    wss.clients.forEach(function each(client){
-       partecipanti+=client.nome+" ";
+
+    wss.clients.forEach( client => {
+        if(client.autenticato) partecipanti += client.nome+" ";
     })
-    wss.clients.forEach(function each(client){
-        client.send(partecipanti);
+    wss.clients.forEach( client => {
+        if(client.autenticato) client.send("Autenticazione riuscita. Lista partecipanti: "+partecipanti);
     })
 }

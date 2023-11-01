@@ -14,7 +14,7 @@ ws.addEventListener('message', function (event) {
 });
 
 ws.on('close', () => {
-  console.log('Disconnected from server');
+  console.log('| Disconnected from server');
 });
 
 function inputMessage(){
