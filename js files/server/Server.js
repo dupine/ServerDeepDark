@@ -103,13 +103,13 @@ function message(username, data, messaggio){
 // ------------------ INVIO LISTA DEI PARTECIPANTI ------------------
 function partecipanti(){
     console.log("<RISPOSTA> invio lista partecipanti a tutti");
-    let partecipanti = "";
+    let partecipanti = "listautenti";
 
     wss.clients.forEach( client => {
-        if(client.autenticato) partecipanti += client.nome+" ";
+        if(client.autenticato) partecipanti += "/"+client.nome;
     })
     wss.clients.forEach( client => {
-        if(client.autenticato) client.send("Autenticazione riuscita. Lista partecipanti: "+partecipanti);
+        if(client.autenticato) client.send(partecipanti);
     })
 }
 //-----------------STORICO CDEI MESSAGGI---------------------------------
