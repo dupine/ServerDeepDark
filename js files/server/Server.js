@@ -54,7 +54,7 @@ function gestioneRichieste(data, ws){
 
         default:
             console.log("<RICHIESTA> richiesta client sconosciuta!");
-            ws.send("comando sconosciuto!");
+            ws.send("errore");
       }
 }
 
@@ -94,6 +94,7 @@ function message(username, data, messaggio){
     console.log("<RISPOSTA> invio broadcast del messaggio di "+ username+": "+messaggio);
     wss.clients.forEach(function each(client){
         client.send("messaggio/"+username+"/"+data+"/"+messaggio);
+        storicoSave();
     })
 }
 
@@ -110,4 +111,7 @@ function partecipanti(){
     wss.clients.forEach( client => {
         if(client.autenticato) client.send("Autenticazione riuscita. Lista partecipanti: "+partecipanti);
     })
+}
+//-----------------STORICO CDEI MESSAGGI---------------------------------
+function storicoSave(){
 }

@@ -12,13 +12,14 @@ ws.addEventListener("open", () =>{
 });
 
 function inviaMessaggio(){
-  let m = document.getElementById("messaggio")
+  let m = document.getElementById("messaggio");
   ws.send(m.value);
 }
 
 ws.addEventListener('message', function (event) {
     console.log(event.data);
 });
+
 </script>
 <body>
 
