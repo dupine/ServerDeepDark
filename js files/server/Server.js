@@ -1,15 +1,13 @@
 // imports
+const { log } = require('console');
 const WebSocketServer = require('ws');
-
-
 
 // creazione oggetti
 const wss = new WebSocketServer.Server({ port: 3000 })
-
+var storicoMessaggi = [];
 
 // ------------------ CONNESSIONE TRAMITE WEBSOCKET ------------------
 wss.on("connection", (ws, req) => {
-    // TODO: trovare un modo per identificare le varie connessioni
     ws.id = req.headers['sec-websocket-key'];
     console.log("| Nuovo client sconosciuto connesso: "+ws.id);
     ws.send('Benvenuto! Sei connesso al server, perfavore accedi!');
@@ -35,8 +33,11 @@ console.log("| The WebSocket server is running on port 3000");
 
 // ------------------ GESTIONE DELLE RICHIESTE ------------------
 function gestioneRichieste(data, ws){
+    // messaggio/matteo/12:43/incontriamoci alle 8/8.30
     var campi = String(data).split("/");
     // TODO: aggiungere che se un utente non si è prima loggato, non può fare niente.
+    //data.replace(/\\/," ").replace(/\\/," ");
+    //var campi = String(data).split("//");
     switch(campi[0]) {
         // se login
         case "login":
@@ -50,6 +51,7 @@ function gestioneRichieste(data, ws){
 
         // se storico
         case "storico":
+            storico(campi[1], campi[2], ws);
             break;
 
         default:
@@ -94,8 +96,9 @@ function message(username, data, messaggio){
     console.log("<RISPOSTA> invio broadcast del messaggio di "+ username+": "+messaggio);
     wss.clients.forEach(function each(client){
         client.send("messaggio/"+username+"/"+data+"/"+messaggio);
-        storicoSave();
     })
+
+    storicoMessaggi.push([changeData(data), messaggio])
 }
 
 
@@ -112,6 +115,28 @@ function partecipanti(){
         if(client.autenticato) client.send("Autenticazione riuscita. Lista partecipanti: "+partecipanti);
     })
 }
+
+
+
 //-----------------STORICO CDEI MESSAGGI---------------------------------
-function storicoSave(){
+function storico(inizio, fine, ws){
+    inizio = changeData(inizio);
+    fine = changeData(fine);
+    let data = "";
+    for (let i = 0; i < storicoMessaggi.length; i++) {
+        data = storicoMessaggi[i][0];
+        if(inizio<=data && fine>=data)
+            ws.send(storicoMessaggi[i][1]);
+    }
+}
+
+
+
+function changeData(data){
+    let hour, minute;
+    [hour, minute] = data.split(":");
+    if(hour.length==1) hour = "0"+hour;
+    if(minute.length==1) minute ="0"+minute;
+    return hour+":"+minute;
+    
 }
