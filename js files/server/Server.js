@@ -32,7 +32,7 @@ console.log("| The WebSocket server is running on port 8080");
 
 
 
-// ------------------ GESTIONE RICHIESTE ------------------
+// --------------------- gestione richieste ---------------------
 function gestioneRichieste(dati, ws){
     var campi = String(dati).split("/");
 
@@ -58,7 +58,7 @@ function gestioneRichieste(dati, ws){
 
 
 
-// ------------------ GESTIONE RICHIESTA LOGIN ------------------
+// ------------------ gestione richiesta login ------------------
 function login(nome, password, ws){
     let trovato = false;
     let nomeEPass = nome+","+password;
@@ -88,7 +88,7 @@ function login(nome, password, ws){
 
 
 
-// ------------------ GESTIONE RICHIESTA MESSAGGIO ------------------
+// ------------------ gestione richiesta messaggio --------------
 function messaggio(username, data, messaggio){
     console.log("<RISPOSTA> invio broadcast del messaggio di "+ username+": "+messaggio);
     wss.clients.forEach(function each(client){
@@ -100,7 +100,7 @@ function messaggio(username, data, messaggio){
 
 
 
-// ------------------ INVIO LISTA DEI PARTECIPANTI ------------------
+// ------------------ invio lista dei partecipanti --------------
 function partecipanti(){
     console.log("<RISPOSTA> invio lista partecipanti a tutti");
     let partecipanti = "listautenti";
@@ -115,7 +115,7 @@ function partecipanti(){
 
 
 
-//-----------------STORICO CDEI MESSAGGI---------------------------------
+// ------------------ storico dei messaggi ----------------------
 function storico(inizio, fine, ws){
     inizio = cambiaData(inizio);
     fine = cambiaData(fine);
@@ -128,7 +128,7 @@ function storico(inizio, fine, ws){
 }
 
 
-// funzione per rendere le date dello stesso formato
+// f-- unzione per rendere le date dello stesso formato: 00:00 --
 function cambiaData(dati){
     let ora, minuto;
     [ora, minuto] = dati.split(":");
