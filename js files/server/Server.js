@@ -7,7 +7,8 @@ const wss = new WebSocketServer.Server({ port: 8080 });
 var storicoMessaggi = [];
 
 
-// ------------------ CONNESSIONE TRAMITE WEBSOCKET ------------------
+
+// -------------- connessione tramite websocket -----------------
 wss.on("connection", (ws, richiesta) => {
     ws.id = richiesta.headers['sec-websocket-key'];
     console.log("| Nuovo client sconosciuto connesso: "+ws.id);
@@ -128,7 +129,8 @@ function storico(inizio, fine, ws){
 }
 
 
-// f-- unzione per rendere le date dello stesso formato: 00:00 --
+
+// -- funzione per rendere le date dello stesso formato: 00:00 --
 function cambiaData(dati){
     let ora, minuto;
     [ora, minuto] = dati.split(":");
