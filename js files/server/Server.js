@@ -2,9 +2,10 @@
 //const { log } = require('console');
 const WebSocketServer = require('ws');
 
-// creazione oggetti
-const wss = new WebSocketServer.Server({ port: 3000 })
+// creazione oggetti e variabili
+const wss = new WebSocketServer.Server({ port: 8080 });
 var storicoMessaggi = [];
+
 
 // ------------------ CONNESSIONE TRAMITE WEBSOCKET ------------------
 wss.on("connection", (ws, richiesta) => {
@@ -27,27 +28,23 @@ wss.on("connection", (ws, richiesta) => {
         console.log("<ERRORE>: si è verificato unn errore")
     }
 });
-console.log("| The WebSocket server is running on port 3000");
+console.log("| The WebSocket server is running on port 8080");
 
 
 
-// ------------------ GESTIONE DELLE RICHIESTE ------------------
+// ------------------ GESTIONE RICHIESTE ------------------
 function gestioneRichieste(dati, ws){
     var campi = String(dati).split("/");
-    //data.replace(/\\/," ").replace(/\\/," ");
-    //var campi = String(data).split("//");
+
     switch(campi[0]) {
-        // se login
         case "login":
             login(campi[1], campi[2], ws);
             break;
 
-        // se messaggio
         case "messaggio":
             messaggio(campi[1], campi[2], campi[3]);
             break;
 
-        // se storico
         case "storico":
             storico(campi[1], campi[2], ws);
             break;
@@ -83,7 +80,7 @@ function login(nome, password, ws){
 
             if(!trovato){
                 console.log("| Autenticazione fallita, disconnessione utente.")
-                ws.close(); 
+                ws.close();
             }
         }
     });
@@ -92,13 +89,13 @@ function login(nome, password, ws){
 
 
 // ------------------ GESTIONE RICHIESTA MESSAGGIO ------------------
-function messaggio(username, dati, messaggio){
+function messaggio(username, data, messaggio){
     console.log("<RISPOSTA> invio broadcast del messaggio di "+ username+": "+messaggio);
     wss.clients.forEach(function each(client){
-        client.send("messaggio/"+username+"/"+dati+"/"+messaggio);
+        client.send("messaggio/"+username+"/"+data+"/"+messaggio);
     })
 
-    storicoMessaggi.push([cambiaData(dati), messaggio])
+    storicoMessaggi.push([cambiaData(data), "messaggio/"+username+"/"+data+"/"+messaggio])
 }
 
 
@@ -131,7 +128,7 @@ function storico(inizio, fine, ws){
 }
 
 
-
+// funzione per rendere le date dello stesso formato
 function cambiaData(dati){
     let ora, minuto;
     [ora, minuto] = dati.split(":");

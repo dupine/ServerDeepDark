@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const prompt = require("prompt-sync")();
 
 // collegamento a
-const ws = new WebSocket("ws://localhost:3000");
+const ws = new WebSocket("ws://localhost:8080");
 
 ws.addEventListener("open", () =>{
   console.log("| WE ARE CONNECTED");
