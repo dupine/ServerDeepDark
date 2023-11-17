@@ -43,11 +43,13 @@ function gestioneRichieste(dati, ws){
             break;
 
         case "messaggio":
-            messaggio(campi[1], campi[2], campi[3]);
+            if(ws.autenticato) messaggio(campi[1], campi[2], campi[3]);
+            else ws.send("Errore, esegui login!")
             break;
 
         case "storico":
-            storico(campi[1], campi[2], ws);
+            if(ws.autenticato) storico(campi[1], campi[2], ws);
+            else ws.send("Errore, esegui login!")
             break;
 
         // richiesta sconosciuta
@@ -120,11 +122,11 @@ function partecipanti(){
 function storico(inizio, fine, ws){
     inizio = cambiaData(inizio);
     fine = cambiaData(fine);
-    let dati = "";
-    for (let i = 0; i < storicoMessaggi.length; i++) {
-        dati = storicoMessaggi[i][0];
-        if(inizio<=dati && fine>=dati)
-            ws.send(storicoMessaggi[i][1]);
+    let data = "";
+    if(storicoMessaggi.length==0) ws.send("vuoto");
+    else for (let i = 0; i < storicoMessaggi.length; i++) {
+        data = storicoMessaggi[i][0];
+        if(inizio<=data && fine>=data) ws.send(storicoMessaggi[i][1]);
     }
 }
 
