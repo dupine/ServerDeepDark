@@ -26,7 +26,7 @@ wss.on("connection", (ws, richiesta) => {
 
     // errore
     ws.onerror = function () {
-        console.log("<ERRORE>: si è verificato unn errore")
+        console.log("<ERRORE>: si è verificato un errore")
     }
 });
 console.log("| The WebSocket server is running on port 8080");
@@ -133,9 +133,9 @@ function storico(inizio, fine, ws){
 
 
 // -- funzione per rendere le date dello stesso formato: 00:00 --
-function cambiaData(dati){
+function cambiaData(data){
     let ora, minuto;
-    [ora, minuto] = dati.split(":");
+    [ora, minuto] = data.split(":");
     if(ora.length==1) ora = "0"+ora;
     if(minuto.length==1) minuto ="0"+minuto;
     return ora+":"+minuto;
